@@ -1,24 +1,30 @@
-import Link from "next/link";
+import { getMeal } from '@/lib/meals'
+import classes from './page.module.css'
+import Image from 'next/image'
 
-export default async function MealsSlugPage({ params }) {
+export default async function MealsDetailPage({params}) {
     const {slug} = await params
+    const meal = getMeal(slug)
+    meal.instructions = meal.instructions.replace(/\n/g, '<br/>')
     return (
-        <main>
-            <h1>Meals Slug Page</h1>
-            <h5>{slug}</h5>
-            {slug == 'rice' &&
-                <>
-                    <p>
-                        Rice is a cereal grain and in its domesticated form is the staple food of over half of the world's population, particularly in Asia and Africa.
+        <>
+            <header className={classes.header}>
+                <div className={classes.image}>
+                    <Image src={meal.image} alt={meal.title} fill/>
+                </div>
+                <div className={classes.headerText}>
+                    <h1>{meal.title}</h1>
+                    <p className={classes.creator}>
+                        by <a href={`mailto:${meal.creator_email}`}>{meal.creator}</a>
                     </p>
-                </>}
-            {slug == 'beans' &&
-                <>
-                    <p>
-                    A bean is the seed of any plant in the legume family (Fabaceae) used as a vegetable for human consumption or animal feed. 
-                    </p>
-                </>}
-            <Link href='/meals'>Return to Meals</Link>
-        </main>
+                    <p className={classes.summary}>{meal.summary}</p>
+                </div>
+            </header>
+            <main>
+                <p className={classes.instructions} dangerouslySetInnerHTML={{
+                    __html: meal.instructions,
+                }}></p>
+            </main>
+        </>
     )
 }
