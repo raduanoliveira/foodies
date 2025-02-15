@@ -3,10 +3,22 @@ import classes from './page.module.css'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
-export default async function MealsDetailPage({params}) {
-    const {slug} = await params
+export async function generateMetadata({ params }) {
+
+    const { slug } = await params
     const meal = getMeal(slug)
-    if(!meal){
+    if (!meal) {
+        notFound()
+    }
+    return {
+        title: meal.title,
+        description: meal.summary,
+    }
+}
+export default async function MealsDetailPage({ params }) {
+    const { slug } = await params
+    const meal = getMeal(slug)
+    if (!meal) {
         notFound()
     }
     meal.instructions = meal.instructions.replace(/\n/g, '<br/>')
@@ -14,7 +26,7 @@ export default async function MealsDetailPage({params}) {
         <>
             <header className={classes.header}>
                 <div className={classes.image}>
-                    <Image src={`https://raduan-demo-users-image.s3.us-east-2.amazonaws.com/images/${meal.image}`} alt={meal.title} fill/>
+                    <Image src={`https://raduan-demo-users-image.s3.us-east-2.amazonaws.com/images/${meal.image}`} alt={meal.title} fill />
                 </div>
                 <div className={classes.headerText}>
                     <h1>{meal.title}</h1>
